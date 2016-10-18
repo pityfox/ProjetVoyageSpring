@@ -5,143 +5,52 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import voyage.Application;
 import voyage.client.model.Login;
 
+@Transactional
 public class LoginDaoJpa implements LoginDao {
+	
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
-	public Login find(Long id) {
-		Login login = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			login = em.find(Login.class, id);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
+	@Transactional(readOnly=true)
+	public Login find(Long id) 
+		{
+		
+		return em.find(Login.class, id);
 		}
-		return login;
-	}
 
 	@Override
-	public List<Login> findAll() {
-		List<Login> logins = new ArrayList<Login>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
+	@Transactioanal(readOnly=true)
+	public List<Login> findAll() 
+		{
 			Query query = em.createQuery("select c from Login c");
-			logins = query.getResultList();
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
+			return query.getResultList();
 		}
-		return logins;
-	}
 
 	@Override
-	public void create(Login obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.persist(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
+	public void create(Login obj) 
+			{
+				em.persist(obj);
 			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-	}
 
 	@Override
-	public Login update(Login obj) {
-		Login login = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			login = em.merge(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
+	public Login update(Login obj)
+			{
+				return em.merge(obj);
 			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return login;
-	}
 
 	@Override
-	public void delete(Login obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.remove(em.merge(obj));
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
+	public void delete(Login obj) 
+			{
+				obj = em.merge(obj);
+				em.remove(obj);
 			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-	}
 	
 }

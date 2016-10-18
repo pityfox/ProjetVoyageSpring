@@ -5,172 +5,67 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 
 import voyage.Application;
 import voyage.client.model.Client;
 
+@Repository
+@Transactional
 public class ClientDaoJpa implements ClientDao {
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Override
+	@Transactional(readOnly=true)
 	public Client find(Long id) {
-		Client client = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			client = em.find(Client.class, id);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return client;
+	
+		return em.find(Client.class, id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Client> findAll() {
-		List<Client> clients = new ArrayList<Client>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select c from Client c");
-			clients = query.getResultList();
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return clients;
+		Query query = em.createQuery("select c from Client c");
+		return query.getResultList();
 	}
+	
+	
 
 	@Override
 	public void create(Client obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.persist(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
+		em.persist(obj);
 	}
 
+	
 	@Override
 	public Client update(Client obj) {
-		Client client = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			client = em.merge(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return client;
+		return em.merge(obj);
 	}
+	
 
 	@Override
 	public void delete(Client obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
+		obj = em.merge(obj);
 
-			tx.begin();
-
-			em.remove(em.merge(obj));
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
+		for (ClientCompte clientCompte : obj.getComptes()) {
+			clientCompteDao.delete(clientCompte);
 		}
-	}
 
+		em.remove(obj);
+	}
+	
+	
 	@Override
+	@Transactional(readOnly = true)
 	public List<Client> findAllByName(String name) {
-		List<Client> clients = new ArrayList<Client>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select c from Client c where c.nom = :monNom");
-			query.setParameter("monNom", name);
-			clients = query.getResultList();
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return clients;
+		Query query = em.createQuery("select c from Client c where c.nom = :monNom");
+		query.setParameter("monNom", name);
+		return query.getResultList();
 	}
+	
 
 }
