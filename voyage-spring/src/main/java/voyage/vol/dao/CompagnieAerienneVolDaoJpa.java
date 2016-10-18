@@ -5,7 +5,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import voyage.Application;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.vol.model.CompagnieAerienneVol;
 import voyage.vol.model.CompagnieAerienneVolId;
 import voyage.vol.model.Vol;
@@ -13,8 +16,6 @@ import voyage.vol.model.Vol;
 
 @Repository
 @Transactional
-
-
 public class CompagnieAerienneVolDaoJpa implements CompagnieAerienneVolDao {
 	
 	@PersistenceContext
@@ -22,14 +23,14 @@ public class CompagnieAerienneVolDaoJpa implements CompagnieAerienneVolDao {
 	
 	
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public CompagnieAerienneVol find(CompagnieAerienneVolId id){
 		
 		return em.find(CompagnieAerienneVol.class,  id);
 	}
 	
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public List<CompagnieAerienneVol> findAll() {
 		Query query = em.createQuery("select cav from CompagnieAerienneVol cav");
 		return query.getResultList();
@@ -42,7 +43,7 @@ public class CompagnieAerienneVolDaoJpa implements CompagnieAerienneVolDao {
 
 	@Override
 	public CompagnieAerienneVol update(CompagnieAerienneVol obj) {
-		em.merge(obj);
+		return em.merge(obj);
 	}
 
 	@Override

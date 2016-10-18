@@ -9,8 +9,11 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import banque.model.ClientCompte;
-import voyage.Application;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.vol.model.*;
 
 @Repository
@@ -31,7 +34,7 @@ public class VolDaoJpa implements VolDao{
 	@Override
 	@Transactional(readOnly=true)
 	public Vol find(Long id) {
-		return em.find(Vol.class, id)
+		return em.find(Vol.class, id);
 	}
 
 	@Override

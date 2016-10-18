@@ -9,6 +9,8 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,10 +18,7 @@ import voyage.vol.model.*;
 
 @Repository
 @Transactional
-
 public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
-
-	
 	
 	@PersistenceContext
 	private EntityManager em;
@@ -27,24 +26,17 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 	@Autowired()
 	@Qualifier("CompagnieAerienneDaoJpa")
 	private CompagnieAerienneVolDao compagnieAerienneVolDao;
-	
-	@PersistenceContext
-	private EntityManager em;
 
 	@Override
 	@Transactional(readOnly=true)
 	public CompagnieAerienne find(Long id) {
 		
 		return em.find(CompagnieAerienne.class, id);
-		return em.find(CompagnieAerienne.class, id);
 	}
 
 	@Override
 	@Transactional(readOnly=true)
 	public List<CompagnieAerienne> findAll() {
-		
-		Query query = em.createQuery("select ca from CompagnieAerienne ca");
-		return query.getResultList();
 		Query query = em.createQuery("select ca from CompagnieAerienne ca");
 		return query.getResultList();
 	}
@@ -71,17 +63,12 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 		em.remove(obj);
 	}
 
-//	@Override
-//	public List<CompagnieAerienne> findAllByName(String name) {
-//		
-//
-//			Query query = em.createQuery("select ca from CompagnieAerienne ca where ca.nom = :monNomCompagnieAerienne");
-//			query.setParameter("monNomCompagnieAerienne", name);
-//			compagnieAeriennes = query.getResultList();
-//			
-//			
-//		return compagnieAeriennes;
-//	}
+	@Override
+	public List<CompagnieAerienne> findAllByName(String name) {
+			Query query = em.createQuery("select ca from CompagnieAerienne ca where ca.nom = :monNomCompagnieAerienne");
+			query.setParameter("monNomCompagnieAerienne", name);
+			return query.getResultList();
+	}
 
 
 

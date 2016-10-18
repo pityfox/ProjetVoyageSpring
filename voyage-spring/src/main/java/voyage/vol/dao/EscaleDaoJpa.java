@@ -7,7 +7,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import voyage.Application;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.vol.model.Escale;
 import voyage.vol.model.EscaleId;
 
@@ -40,7 +43,7 @@ public class EscaleDaoJpa implements EscaleDao {
 
 	@Override
 	public Escale update(Escale obj) {
-		em.merge(obj);
+		return em.merge(obj);
 	}
 
 	@Override
