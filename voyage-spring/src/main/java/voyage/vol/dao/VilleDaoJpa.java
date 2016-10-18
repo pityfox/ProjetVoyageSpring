@@ -6,174 +6,54 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import voyage.Application;
 import voyage.vol.model.*;
 
+@Repository
+@Transactional
 public class VilleDaoJpa implements VilleDao{
 
+	@PersistenceContext
+	private EntityManager em;
+
 	@Override
+	@Transactional(readOnly = true)
 	public Ville find(Long id) {
-		Ville ville = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			ville = em.find(Ville.class, id);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return ville;
+		return em.find(Ville.class, id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Ville> findAll() {
-		List<Ville> villes = new ArrayList<Ville>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select v from Ville v");
-			villes = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return villes;
+		Query query = em.createQuery("select v from Ville v");
+		return query.getResultList();
 	}
 
 	@Override
 	public void create(Ville obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.persist(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		
+		em.persist(obj);
 	}
 
 	@Override
 	public Ville update(Ville obj) {
-		Ville ville = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			ville = em.merge(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return ville;
+		return em.merge(obj);
 	}
 
 	@Override
 	public void delete(Ville obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.remove(em.merge(obj));
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
+		em.remove(em.merge(obj));
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Ville> findAllByName(String name) {
-		List<Ville> villes = new ArrayList<Ville>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select v from Ville v where c.nomVille = :monNomVille");
-			query.setParameter("monNomVille", name);
-			villes = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return villes;
+		Query query = em.createQuery("select v from Ville v where c.nomVille = :monNomVille");
+		query.setParameter("monNomVille", name);
+		return query.getResultList();
 	}
-
 }

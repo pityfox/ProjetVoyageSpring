@@ -6,150 +6,46 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import voyage.Application;
 import voyage.vol.model.*;
 
+@Repository
+@Transactional
 public class VolDaoJpa implements VolDao{
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Override
 	public Vol find(Long id) {
-		Vol vol = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			//vol = em.find(Vol.class, id);
 			Query query = em.createQuery("select distinct v from Vol v where v.id=:idVol");
 			query.setParameter("idVol", id);
-			vol = (Vol) query.getSingleResult();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return vol;
+			return (Vol) query.getSingleResult();
 	}
 
 	@Override
 	public List<Vol> findAll() {
-		List<Vol> vols = new ArrayList<Vol>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
 			Query query = em.createQuery("select v from Vol v");
-			vols = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return vols;
+			return query.getResultList();
 	}
 
 	@Override
 	public void create(Vol obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
 			em.persist(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		
 	}
 
 	@Override
 	public Vol update(Vol obj) {
-		Vol vol = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			vol = em.merge(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return vol;
+			return em.merge(obj);
 	}
 
 	@Override
 	public void delete(Vol obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
 			em.remove(em.merge(obj));
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
 	}
-
-	
-
 }

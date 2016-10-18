@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
-import voyage.Application;
 import voyage.model.Reservation;
 
 public class ReservationDaoJpa implements ReservationDao{

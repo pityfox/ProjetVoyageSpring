@@ -7,8 +7,8 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>voyage-spring</name>
 	<url>http://maven.apache.org</url>
-	<dependencies>
-		<dependency>   
+<dependencies>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>9.4-1204-jdbc4</version>
@@ -22,6 +22,21 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 			<version>4.3.11.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>4.3.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>4.3.3.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
 		</dependency>
 	</dependencies>
 	<build>

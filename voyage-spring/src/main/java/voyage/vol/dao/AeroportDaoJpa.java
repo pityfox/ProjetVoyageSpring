@@ -6,174 +6,55 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import voyage.Application;
 import voyage.vol.model.*;
 
+@Repository
+@Transactional
 public class AeroportDaoJpa implements AeroportDao{
 
+	@PersistenceContext
+	private EntityManager em;
+
 	@Override
+	@Transactional(readOnly = true)
 	public Aeroport find(Long id) {
-		Aeroport aeroport = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			aeroport = em.find(Aeroport.class, id);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return aeroport;
+		return em.find(Aeroport.class, id);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Aeroport> findAll() {
-		List<Aeroport> aeroports = new ArrayList<Aeroport>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select a from Aeroport a");
-			aeroports = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return aeroports;
+		Query query = em.createQuery("select a from Aeroport a");
+		return query.getResultList();
 	}
 
 	@Override
 	public void create(Aeroport obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.persist(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		
+		em.persist(obj);
 	}
 
 	@Override
 	public Aeroport update(Aeroport obj) {
-		Aeroport aeroport = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			aeroport = em.merge(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return aeroport;
+		return em.merge(obj);
 	}
 
 	@Override
 	public void delete(Aeroport obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.remove(em.merge(obj));
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
+		em.remove(em.merge(obj));
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<Aeroport> findAllByName(String name) {
-		List<Aeroport> aeroports = new ArrayList<Aeroport>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select a from Aeroport a where c.nomAeroport = :monNomAeroport");
-			query.setParameter("monNomAeroport", name);
-			aeroports = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return aeroports;
+		Query query = em.createQuery("select a from Aeroport a where c.nomAeroport = :monNomAeroport");
+		query.setParameter("monNomAeroport", name);
+		return query.getResultList();
 	}
 
 }
