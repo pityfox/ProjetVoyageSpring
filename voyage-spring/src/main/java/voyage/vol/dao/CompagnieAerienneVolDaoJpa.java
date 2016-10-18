@@ -3,154 +3,51 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import voyage.Application;
 import voyage.vol.model.CompagnieAerienneVol;
 import voyage.vol.model.CompagnieAerienneVolId;
 import voyage.vol.model.Vol;
 
+
+@Repository
+@Transactional
+
+
 public class CompagnieAerienneVolDaoJpa implements CompagnieAerienneVolDao {
 	
+	@PersistenceContext
+	private EntityManager em;
+	
+	
 	@Override
+	@Transactional(readOnly=true)
 	public CompagnieAerienneVol find(CompagnieAerienneVolId id){
 		
-		CompagnieAerienneVol compagnieAerienneVol=null;
-		EntityManager em=null;
-		EntityTransaction tx=null;
-		try{
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-			compagnieAerienneVol = em.find(CompagnieAerienneVol.class, id);
-			
-			
-			tx.commit();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return  compagnieAerienneVol;
+		return em.find(CompagnieAerienneVol.class,  id);
 	}
 	
 	@Override
+	@Transactional(readOnly=true)
 	public List<CompagnieAerienneVol> findAll() {
-		List<CompagnieAerienneVol> compagnieAerienneVols = new ArrayList<CompagnieAerienneVol>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select ca from CompagnieAerienneVol ca");
-			compagnieAerienneVols = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return compagnieAerienneVols;
+		Query query = em.createQuery("select cav from CompagnieAerienneVol cav");
+		return query.getResultList();
 	}
 	
 	@Override
 		public void create(CompagnieAerienneVol obj) {
-				CompagnieAerienneVol compagnieAerienneVol = null;
-				EntityManager em = null;
-				EntityTransaction tx = null;
-				try {
-					em = Application.getInstance().getEmf().createEntityManager();
-					tx = em.getTransaction();
-
-					tx.begin();
-			
-			Vol vol = em.merge(obj.getVol());
-			obj.setVol(vol);
-			obj.setCompagnieAerienne(em.merge(obj.getCompagnieAerienne()));
-			
-			
-			em.persist(obj);
-			
-			tx.commit();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		
+				em.persist(obj);
 			}
 
 	@Override
 	public CompagnieAerienneVol update(CompagnieAerienneVol obj) {
-		CompagnieAerienneVol compagnieAerienneVol = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			compagnieAerienneVol = em.merge(obj);
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return compagnieAerienneVol;
+		em.merge(obj);
 	}
 
 	@Override
 	public void delete(CompagnieAerienneVol obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.remove(em.merge(obj));			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		}
+		em.remove(obj);
 	}
 
-
+}

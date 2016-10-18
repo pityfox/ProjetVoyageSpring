@@ -5,151 +5,47 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-
 import voyage.Application;
-
 import voyage.vol.model.Escale;
 import voyage.vol.model.EscaleId;
 
+@Repository
+@Transactional
 public class EscaleDaoJpa implements EscaleDao {
 
+	
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Override
+	@Transactional(readOnly=true)
 	public Escale find(EscaleId id) {
-		Escale escale = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			escale = em.find(Escale.class, id);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return escale;
+		return em.find(Escale.class, id);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<Escale> findAll() {
-		List<Escale> escales = new ArrayList<Escale>();
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			Query query = em.createQuery("select e from Escale e");
-			escales = query.getResultList();
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return escales;
+		Query query = em.createQuery("select v from Vol v");
+		return query.getResultList();
 	}
 
 	@Override
 	public void create(Escale obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			// IdClass
-//			obj.setVol(em.merge(obj.getVol()));
-//			obj.setAeroport(em.merge(obj.getAeroport()));
-			
-			em.persist(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
 		
+			em.persist(obj);
 	}
 
 	@Override
 	public Escale update(Escale obj) {
-		Escale escale = null;
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			escale = em.merge(obj);
-
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
-		return escale;
+		em.merge(obj);
 	}
 
 	@Override
 	public void delete(Escale obj) {
-		EntityManager em = null;
-		EntityTransaction tx = null;
-		try {
-			em = Application.getInstance().getEmf().createEntityManager();
-			tx = em.getTransaction();
-
-			tx.begin();
-
-			em.remove(em.merge(obj));
-			
-			tx.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-			if (tx != null) {
-				tx.rollback();
-			}
-		} finally {
-			if (em != null) {
-				em.close();
-			}
-		}
+		em.remove(obj);
 	}
 		
 	
