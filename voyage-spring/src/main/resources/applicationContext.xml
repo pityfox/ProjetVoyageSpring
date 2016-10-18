@@ -12,7 +12,7 @@
 	<context:annotation-config/>
 	
 	<!-- Activation annotations et scan des classes du package voyage.dao -->
-	<context:component-scan base-package="voyage voyage.vol.dao"/>
+	<context:component-scan base-package="voyage"/>
 
 	<!-- Charge en mémoire le contenu du fichier sgbd.properties -->
 	<context:property-placeholder location="classpath:sgbd.properties"/>
