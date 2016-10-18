@@ -7,17 +7,26 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
-import voyage.Application;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.client.model.Passager;
+import voyage.dao.ReservationDao;
 import voyage.model.Reservation;
 
+@Repository
 @Transactional
 public class PassagerDaoJpa implements PassagerDao{
 	@PersistenceContext
 	private EntityManager em;
 
+	@Autowired
+	@Qualifier("reservationDaoJpa")
+	private ReservationDao reservationDao;
+	
 	@Override
 	@Transactional(readOnly=true)
 	public Passager find(Long id) 
@@ -50,7 +59,7 @@ public class PassagerDaoJpa implements PassagerDao{
 	{
 		obj = em.merge(obj);
 
-		for (Reservation reservation : obj.getReservations()) {
+		for (Reservation reservation : obj.getreservations()) {
 			reservationDao.delete(reservation);
 		}
 

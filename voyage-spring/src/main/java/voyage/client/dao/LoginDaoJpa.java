@@ -7,11 +7,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
-import voyage.Application;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.client.model.Login;
 
+@Repository
 @Transactional
 public class LoginDaoJpa implements LoginDao {
 	
@@ -27,7 +29,7 @@ public class LoginDaoJpa implements LoginDao {
 		}
 
 	@Override
-	@Transactioanal(readOnly=true)
+	@Transactional(readOnly=true)
 	public List<Login> findAll() 
 		{
 			Query query = em.createQuery("select c from Login c");

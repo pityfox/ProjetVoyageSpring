@@ -7,10 +7,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
-import voyage.Application;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.client.model.Client;
+import voyage.vol.dao.CompagnieAerienneVolDao;
 
 @Repository
 @Transactional
@@ -22,7 +26,6 @@ public class ClientDaoJpa implements ClientDao {
 	@Override
 	@Transactional(readOnly=true)
 	public Client find(Long id) {
-	
 		return em.find(Client.class, id);
 	}
 
@@ -32,8 +35,6 @@ public class ClientDaoJpa implements ClientDao {
 		Query query = em.createQuery("select c from Client c");
 		return query.getResultList();
 	}
-	
-	
 
 	@Override
 	public void create(Client obj) {
@@ -50,11 +51,6 @@ public class ClientDaoJpa implements ClientDao {
 	@Override
 	public void delete(Client obj) {
 		obj = em.merge(obj);
-
-		for (ClientCompte clientCompte : obj.getComptes()) {
-			clientCompteDao.delete(clientCompte);
-		}
-
 		em.remove(obj);
 	}
 	

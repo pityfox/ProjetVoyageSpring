@@ -24,11 +24,11 @@ public class VolDaoJpa implements VolDao{
 	private EntityManager em;
 	
 	@Autowired
-	@Qualifier("CompagnieAerienneVolDaoJpa")
+	@Qualifier("compagnieAerienneVolDaoJpa")
 	private CompagnieAerienneVolDao compagnieAerienneVolDao;
 	
 	@Autowired
-	@Qualifier("EscaleDaoJpa")
+	@Qualifier("escaleDaoJpa")
 	private EscaleDao escaleDao;
 
 	@Override

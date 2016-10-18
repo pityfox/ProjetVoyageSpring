@@ -7,19 +7,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.transaction.Transactional;
 
-import voyage.Application;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import voyage.model.Reservation;
 
-
-@Transactioanal
+@Repository
+@Transactional
 public class ReservationDaoJpa implements ReservationDao{
+	
+	
 	@PersistenceContext
 	private EntityManager em;
 
 	@Override
-	@Transactioanal(readOnly=true)
+	@Transactional(readOnly=true)
 	public Reservation find(Long id)
 		{
 			return em.find(Reservation.class, id);

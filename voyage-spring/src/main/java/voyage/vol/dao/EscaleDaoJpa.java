@@ -1,10 +1,8 @@
 package voyage.vol.dao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -18,10 +16,10 @@ import voyage.vol.model.EscaleId;
 @Transactional
 public class EscaleDaoJpa implements EscaleDao {
 
-	
+
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@Override
 	@Transactional(readOnly=true)
 	public Escale find(EscaleId id) {
@@ -37,8 +35,7 @@ public class EscaleDaoJpa implements EscaleDao {
 
 	@Override
 	public void create(Escale obj) {
-		
-			em.persist(obj);
+		em.persist(obj);
 	}
 
 	@Override
@@ -50,7 +47,5 @@ public class EscaleDaoJpa implements EscaleDao {
 	public void delete(Escale obj) {
 		em.remove(obj);
 	}
-		
-	
 
 }

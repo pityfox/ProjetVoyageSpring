@@ -24,7 +24,7 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 	private EntityManager em;
 	
 	@Autowired()
-	@Qualifier("CompagnieAerienneDaoJpa")
+	@Qualifier("compagnieAerienneVolDaoJpa")
 	private CompagnieAerienneVolDao compagnieAerienneVolDao;
 
 	@Override
@@ -44,8 +44,6 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 	@Override
 	public void create(CompagnieAerienne obj) {
 		em.persist(obj);
-		
-		em.persist(obj);
 	}
 
 	@Override
@@ -59,8 +57,6 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 		em.remove(em.merge(obj));
 			compagnieAerienneVolDao.delete(compagnieAerienneVol);
 		}
-
-		em.remove(obj);
 	}
 
 	@Override
