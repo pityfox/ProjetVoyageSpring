@@ -16,24 +16,43 @@ import voyage.vol.model.*;
 
 @Repository
 @Transactional
+
 public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 
+	
+	
+	@PersistenceContext
+	private EntityManager em;
+	
+	@Autowired()
+	@Qualifier("CompagnieAerienneDaoJpa")
+	private CompagnieAerienneVolDao compagnieAerienneVolDao;
+	
 	@PersistenceContext
 	private EntityManager em;
 
 	@Override
+	@Transactional(readOnly=true)
 	public CompagnieAerienne find(Long id) {
+		
+		return em.find(CompagnieAerienne.class, id);
 		return em.find(CompagnieAerienne.class, id);
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public List<CompagnieAerienne> findAll() {
+		
+		Query query = em.createQuery("select ca from CompagnieAerienne ca");
+		return query.getResultList();
 		Query query = em.createQuery("select ca from CompagnieAerienne ca");
 		return query.getResultList();
 	}
 
 	@Override
 	public void create(CompagnieAerienne obj) {
+		em.persist(obj);
+		
 		em.persist(obj);
 	}
 
@@ -44,15 +63,25 @@ public class CompagnieAerienneDaoJpa implements CompagnieAerienneDao{
 
 	@Override
 	public void delete(CompagnieAerienne obj) {
+		for (CompagnieAerienneVol compagnieAerienneVol : obj.getVols()) {
 		em.remove(em.merge(obj));
+			compagnieAerienneVolDao.delete(compagnieAerienneVol);
+		}
+
+		em.remove(obj);
 	}
 
-	@Override
-	public List<CompagnieAerienne> findAllByName(String name) {
-		Query query = em.createQuery("select ca from CompagnieAerienne ca where ca.nom = :monNomCompagnieAerienne");
-		query.setParameter("monNomCompagnieAerienne", name);
-		return query.getResultList();
-	}
+//	@Override
+//	public List<CompagnieAerienne> findAllByName(String name) {
+//		
+//
+//			Query query = em.createQuery("select ca from CompagnieAerienne ca where ca.nom = :monNomCompagnieAerienne");
+//			query.setParameter("monNomCompagnieAerienne", name);
+//			compagnieAeriennes = query.getResultList();
+//			
+//			
+//		return compagnieAeriennes;
+//	}
 
 
 
