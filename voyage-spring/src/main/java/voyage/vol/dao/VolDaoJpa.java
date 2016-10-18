@@ -1,11 +1,9 @@
 package voyage.vol.dao;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -46,8 +44,8 @@ public class VolDaoJpa implements VolDao{
 
 	@Override
 	public void create(Vol obj) {
+		obj = em.merge(obj);
 		em.persist(obj);
-		
 	}
 
 	@Override

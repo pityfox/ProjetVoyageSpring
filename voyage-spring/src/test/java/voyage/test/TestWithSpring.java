@@ -4,7 +4,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import voyage.Application;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import voyage.client.dao.ClientDao;
 import voyage.client.dao.ClientDaoJpa;
 import voyage.client.dao.LoginDao;
@@ -46,7 +48,7 @@ import voyage.vol.model.EscaleId;
 import voyage.vol.model.Ville;
 import voyage.vol.model.Vol;
 
-public class Test {
+public class TestWithSpring {
 
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -54,10 +56,23 @@ public class Test {
 	
 	public static void main(String[] args) throws ParseException {
 
-		// ------- CLIENT ----------
-		ReservationDao reservationDao=new ReservationDaoJpa();
-		PassagerDao passagerDao=new PassagerDaoJpa();
+		ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
 		
+		PassagerDao passagerDao = context.getBean(PassagerDao.class);
+		ClientDao clientDao = context.getBean(ClientDao.class);
+		LoginDao logDao = context.getBean(LoginDao.class);
+		
+		AeroportDao aeroportDao = context.getBean(AeroportDao.class);
+		VilleDao villeDao = context.getBean(VilleDao.class);
+		VolDao volDao = new VolDaoJpa();
+		EscaleDao escaleDao =new EscaleDaoJpa();
+		AeroportVilleDao aeroportVilleDao = context.getBean(AeroportVilleDao.class);
+		ReservationDao reservationDao = context.getBean(ReservationDao.class);
+		CompagnieAerienneDao compagnieAerienneDao= new CompagnieAerienneDaoJpa();
+		CompagnieAerienneVolDao compagnieAerienneVolDao =new CompagnieAerienneVolDaoJpa();
+		
+		
+		// ------- CLIENT ----------
 		Reservation resa1=new Reservation(new Date(), 15478);
 		Reservation resa2=new Reservation(new Date(), 15479);
 		Reservation resa3=new Reservation(new Date(), 15480);
@@ -84,7 +99,7 @@ public class Test {
 		
 		
 		// Test Clients
-		ClientDao clientDao = new ClientDaoJpa();
+		
 		
 		Client client1 = new ClientPhysique("MICHELIN", "luc", "0123456789", "015478965", "luc@google.com", TitrePhysique.MR);
 		client1.setAdresse(new Adresse("RUE DU MORT", "75666", "Paris", "France"));
@@ -98,7 +113,7 @@ public class Test {
 		clientDao.create(client3);
 		
 		// Test Logins
-		LoginDao logDao = new LoginDaoJpa();
+		
 		
 		Login log1 = new Login("popol","mdp",false);
 		Login log2 = new Login("loul","lel",true);
@@ -121,15 +136,6 @@ public class Test {
 		resa4.setClient(client2);
 
 		// --------- VOL ---------
-
-		AeroportDao aeroportDao = new AeroportDaoJpa();
-		VilleDao villeDao = new VilleDaoJpa();
-		VolDao volDao = new VolDaoJpa();
-		EscaleDao escaleDao =new EscaleDaoJpa();
-		AeroportVilleDao aeroportVilleDao = new AeroportVilleDaoJpa();
-		CompagnieAerienneDao compagnieAerienneDao = new CompagnieAerienneDaoJpa();
-		CompagnieAerienneVolDao compagnieAerienneVolDao = new CompagnieAerienneVolDaoJpa();
-		
 		Aeroport aeroportCdg = new Aeroport();
 		aeroportCdg.setNom("Charles de Gaulle");
 		aeroportDao.create(aeroportCdg);
@@ -219,7 +225,8 @@ public class Test {
 		vol1.setDateArrivee(sdf.parse("11/10/2016"));
 		vol1.setHeureDepart(heure.parse("11:30 PM"));
 		vol1.setHeureArrivee(heure.parse("01:30 PM"));
-		volDao.create(vol1);
+		vol1.setAeroportDepart(aeroportOrly);
+		
 		
 		Escale escale1 = new Escale();
 //		escale1.setAeroport(aeroportJfk);
@@ -227,7 +234,7 @@ public class Test {
 		escale1.setId(new EscaleId(aeroportJfk,vol1)); //Embedded
 		escale1.setHeureDepart(heure.parse("09:30 AM"));
 		escale1.setHeureArrivee(heure.parse("08:30 AM"));
-		escaleDao.create(escale1);
+		
 		
 		Escale escale2 = new Escale();
 //		escale2.setAeroport(aeroportChicago);
@@ -235,12 +242,13 @@ public class Test {
 		escale2.setId(new EscaleId(aeroportChicago, vol1)); // Embedded
 		escale2.setHeureDepart(heure.parse("12:30 AM"));
 		escale2.setHeureArrivee(heure.parse("11:30 AM"));
-		escaleDao.create(escale2);
+		
 		
 		vol1.addEscale(escale2);
 		vol1.addEscale(escale1);
-		vol1.setAeroportDepart(aeroportOrly);
-		vol1 = volDao.update(vol1);
+		escaleDao.create(escale2);
+		escaleDao.create(escale1);
+		volDao.create(vol1);
 		
 		CompagnieAerienne compagnieAerienne1=new CompagnieAerienne();
 		compagnieAerienne1.setNom("Air France");
@@ -294,7 +302,6 @@ public class Test {
 //		Vol volx = volDao.find(vol1.getId());
 		volDao.delete(volDao.find(vol1.getId()));
 		
-		Application.close();
 	}
 
 }
