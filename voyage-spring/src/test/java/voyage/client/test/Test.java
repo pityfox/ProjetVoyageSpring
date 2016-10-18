@@ -3,7 +3,6 @@ package voyage.client.test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import voyage.Application;
 import voyage.client.dao.ClientDao;
 import voyage.client.dao.ClientDaoJpa;
 import voyage.client.dao.LoginDao;
@@ -101,7 +100,6 @@ public class Test {
 		resa3.setClient(client3);
 		resa3 = reservationDao.update(resa3);
 
-		Application.close();
 		
 
 	}

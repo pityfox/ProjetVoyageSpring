@@ -44,7 +44,6 @@ public class VolDaoJpa implements VolDao{
 
 	@Override
 	public void create(Vol obj) {
-		obj = em.merge(obj);
 		em.persist(obj);
 	}
 

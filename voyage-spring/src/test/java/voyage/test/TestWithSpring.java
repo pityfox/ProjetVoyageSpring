@@ -8,11 +8,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import voyage.client.dao.ClientDao;
-import voyage.client.dao.ClientDaoJpa;
 import voyage.client.dao.LoginDao;
-import voyage.client.dao.LoginDaoJpa;
 import voyage.client.dao.PassagerDao;
-import voyage.client.dao.PassagerDaoJpa;
 import voyage.client.model.Adresse;
 import voyage.client.model.Client;
 import voyage.client.model.ClientEI;
@@ -23,22 +20,14 @@ import voyage.client.model.Passager;
 import voyage.client.model.TitreMoral;
 import voyage.client.model.TitrePhysique;
 import voyage.dao.ReservationDao;
-import voyage.dao.ReservationDaoJpa;
 import voyage.model.Reservation;
 import voyage.vol.dao.AeroportDao;
-import voyage.vol.dao.AeroportDaoJpa;
 import voyage.vol.dao.AeroportVilleDao;
-import voyage.vol.dao.AeroportVilleDaoJpa;
 import voyage.vol.dao.CompagnieAerienneDao;
-import voyage.vol.dao.CompagnieAerienneDaoJpa;
 import voyage.vol.dao.CompagnieAerienneVolDao;
-import voyage.vol.dao.CompagnieAerienneVolDaoJpa;
 import voyage.vol.dao.EscaleDao;
-import voyage.vol.dao.EscaleDaoJpa;
 import voyage.vol.dao.VilleDao;
-import voyage.vol.dao.VilleDaoJpa;
 import voyage.vol.dao.VolDao;
-import voyage.vol.dao.VolDaoJpa;
 import voyage.vol.model.Aeroport;
 import voyage.vol.model.AeroportVille;
 import voyage.vol.model.CompagnieAerienne;
@@ -52,7 +41,7 @@ public class TestWithSpring {
 
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private static SimpleDateFormat heure = new SimpleDateFormat("h:mm a");
+	private static SimpleDateFormat heure = new SimpleDateFormat("hh:mm a");
 	
 	public static void main(String[] args) throws ParseException {
 
@@ -64,12 +53,12 @@ public class TestWithSpring {
 		
 		AeroportDao aeroportDao = context.getBean(AeroportDao.class);
 		VilleDao villeDao = context.getBean(VilleDao.class);
-		VolDao volDao = new VolDaoJpa();
-		EscaleDao escaleDao =new EscaleDaoJpa();
+		VolDao volDao = context.getBean(VolDao.class);
+		EscaleDao escaleDao = context.getBean(EscaleDao.class);
 		AeroportVilleDao aeroportVilleDao = context.getBean(AeroportVilleDao.class);
 		ReservationDao reservationDao = context.getBean(ReservationDao.class);
-		CompagnieAerienneDao compagnieAerienneDao= new CompagnieAerienneDaoJpa();
-		CompagnieAerienneVolDao compagnieAerienneVolDao =new CompagnieAerienneVolDaoJpa();
+		CompagnieAerienneDao compagnieAerienneDao= context.getBean(CompagnieAerienneDao.class);
+		CompagnieAerienneVolDao compagnieAerienneVolDao = context.getBean(CompagnieAerienneVolDao.class);
 		
 		
 		// ------- CLIENT ----------
@@ -225,8 +214,7 @@ public class TestWithSpring {
 		vol1.setDateArrivee(sdf.parse("11/10/2016"));
 		vol1.setHeureDepart(heure.parse("11:30 PM"));
 		vol1.setHeureArrivee(heure.parse("01:30 PM"));
-		vol1.setAeroportDepart(aeroportOrly);
-		
+		volDao.create(vol1);
 		
 		Escale escale1 = new Escale();
 //		escale1.setAeroport(aeroportJfk);
@@ -234,7 +222,7 @@ public class TestWithSpring {
 		escale1.setId(new EscaleId(aeroportJfk,vol1)); //Embedded
 		escale1.setHeureDepart(heure.parse("09:30 AM"));
 		escale1.setHeureArrivee(heure.parse("08:30 AM"));
-		
+		escaleDao.create(escale1);
 		
 		Escale escale2 = new Escale();
 //		escale2.setAeroport(aeroportChicago);
@@ -242,13 +230,11 @@ public class TestWithSpring {
 		escale2.setId(new EscaleId(aeroportChicago, vol1)); // Embedded
 		escale2.setHeureDepart(heure.parse("12:30 AM"));
 		escale2.setHeureArrivee(heure.parse("11:30 AM"));
-		
-		
-		vol1.addEscale(escale2);
-		vol1.addEscale(escale1);
 		escaleDao.create(escale2);
-		escaleDao.create(escale1);
-		volDao.create(vol1);
+		
+//		vol1.addEscale(escale2);
+//		vol1.addEscale(escale1);
+		
 		
 		CompagnieAerienne compagnieAerienne1=new CompagnieAerienne();
 		compagnieAerienne1.setNom("Air France");
@@ -281,26 +267,6 @@ public class TestWithSpring {
 		p1= passagerDao.find(p1.getId());
 		System.out.println(p1.getreservations());
 		
-		// TEST SUPPRESSION VOL
-		vol1=volDao.find(vol1.getId());
-		System.out.println(vol1.getId());
-//		
-		for(Reservation r:vol1.getReservations())
-			reservationDao.delete(r);
-////		vol1.setReservations(null);
-//		
-		for(CompagnieAerienneVol cvol:vol1.getCompagniesAeriennes())
-			compagnieAerienneVolDao.delete(cvol);
-////		vol1.setCompagniesAeriennes(null);
-//		
-		for(Escale esc:vol1.getEscales())
-			escaleDao.delete(esc);
-////		vol1.setEscales(null);
-//		
-////		volDao.delete(vol1);
-		
-//		Vol volx = volDao.find(vol1.getId());
-		volDao.delete(volDao.find(vol1.getId()));
 		
 	}
 

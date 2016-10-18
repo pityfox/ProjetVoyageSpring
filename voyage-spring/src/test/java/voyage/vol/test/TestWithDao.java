@@ -3,9 +3,9 @@ package voyage.vol.test;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-
+import voyage.dao.ReservationDao;
+import voyage.dao.ReservationDaoJpa;
 import voyage.model.Reservation;
-import voyage.Application;
 import voyage.vol.dao.AeroportDao;
 import voyage.vol.dao.AeroportDaoJpa;
 import voyage.vol.dao.AeroportVilleDao;
@@ -16,8 +16,6 @@ import voyage.vol.dao.CompagnieAerienneVolDao;
 import voyage.vol.dao.CompagnieAerienneVolDaoJpa;
 import voyage.vol.dao.EscaleDao;
 import voyage.vol.dao.EscaleDaoJpa;
-import voyage.dao.ReservationDao;
-import voyage.dao.ReservationDaoJpa;
 import voyage.vol.dao.VilleDao;
 import voyage.vol.dao.VilleDaoJpa;
 import voyage.vol.dao.VolDao;
@@ -34,7 +32,7 @@ import voyage.vol.model.Vol;
 public class TestWithDao {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	private static SimpleDateFormat heure = new SimpleDateFormat("h:mm a");
+	private static SimpleDateFormat heure = new SimpleDateFormat("hh:mm");
 
 	public static void main(String[] args) throws ParseException {
 
@@ -181,7 +179,6 @@ public class TestWithDao {
 		
 		
 		
-		Application.close();
 	}
 	
 }
